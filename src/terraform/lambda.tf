@@ -13,6 +13,7 @@ resource "random_string" "this" {
 locals {
   source_path = "${path.module}/.."
   search_pokemon_function_name_and_ecr_repo_name     = "search_pokemon-${random_string.this.result}"
+  list_pokemons_function_name_and_ecr_repo_name      = "list_pokemons-${random_string.this.result}"
   path_include                                    = ["**"]
   path_exclude                                    = ["**/__pycache__/**"]
   files_include                                   = setunion([for f in local.path_include : fileset(local.source_path, f)]...)
@@ -30,6 +31,7 @@ provider "docker" {
     password = data.aws_ecr_authorization_token.token.password
   }
 }
+
 ####################################
 ####################################
 ####################################
@@ -61,12 +63,12 @@ module "search_pokemon_lambda" {
     "DYNAMODB_TABLE" = var.dynamodb_table
   }
 
-  # allowed_triggers = {
-  #   AllowExecutionFromAPIGateway = {
-  #     service    = "apigateway"
-  #     source_arn = "${module.api_gateway.api_execution_arn}/*/*"
-  #   }
-  # }
+  allowed_triggers = {
+    AllowExecutionFromAPIGateway = {
+      service    = "apigateway"
+      source_arn = "${module.api_gateway.api_execution_arn}/*/*"
+    }
+  }
 
   tags = {
     "Terraform"   = "true",
@@ -124,6 +126,106 @@ module "search_pokemon_docker_image" {
   })
 
   source_path = "${local.source_path}/search_pokemon/"
+  triggers = {
+    dir_sha = local.dir_sha
+  }
+}
+
+
+####################################
+####################################
+####################################
+# GET /pokemons ####################
+####################################
+####################################
+####################################
+
+module "list_pokemons_lambda" {
+  source  = "terraform-aws-modules/lambda/aws"
+  version = "7.7.0"
+
+  function_name  = local.list_pokemons_function_name_and_ecr_repo_name
+  description    = "Pokemon Master: GET /pokemons "
+  create_package = false
+  timeout        = 30
+
+  ##################
+  # Container Image
+  ##################
+  package_type = "Image"
+  # architectures = ["x86_64"] # or ["arm64"]
+  architectures = ["arm64"]
+  image_uri = module.list_pokemons_docker_image.image_uri
+
+  publish = true # Whether to publish creation/change as new Lambda Function Version.
+
+  environment_variables = {
+    "DYNAMODB_TABLE" = var.dynamodb_table
+  }
+
+  allowed_triggers = {
+    AllowExecutionFromAPIGateway = {
+      service    = "apigateway"
+      source_arn = "${module.api_gateway.api_execution_arn}/*/*"
+    }
+  }
+
+  tags = {
+    "Terraform"   = "true",
+  }
+  ######################
+  # Additional policies
+  ######################
+
+  attach_policy_statements = true
+  policy_statements = {
+    dynamodb_crud = {
+      effect = "Allow",
+      actions = [
+        "dynamodb:BatchGetItem",
+        "dynamodb:BatchWriteItem",
+        "dynamodb:DeleteItem",
+        "dynamodb:GetItem",
+        "dynamodb:PutItem",
+        "dynamodb:Query",
+        "dynamodb:Scan",
+        "dynamodb:UpdateItem"
+      ],
+      resources = [
+        "arn:aws:dynamodb:${var.aws_region}:${data.aws_caller_identity.this.account_id}:table/${var.dynamodb_table}"
+      ]
+    },
+  }
+
+}
+
+module "list_pokemons_docker_image" {
+  source  = "terraform-aws-modules/lambda/aws//modules/docker-build"
+  version = "7.7.0"
+
+  create_ecr_repo      = true
+  keep_remotely        = true
+  use_image_tag        = false
+  image_tag_mutability = "MUTABLE"
+  ecr_repo             = local.list_pokemons_function_name_and_ecr_repo_name
+  ecr_repo_lifecycle_policy = jsonencode({
+    "rules" : [
+      {
+        "rulePriority" : 1,
+        "description" : "Keep only the last 10 images",
+        "selection" : {
+          "tagStatus" : "any",
+          "countType" : "imageCountMoreThan",
+          "countNumber" : 10
+        },
+        "action" : {
+          "type" : "expire"
+        }
+      }
+    ]
+  })
+
+  source_path = "${local.source_path}/list_pokemons/"
   triggers = {
     dir_sha = local.dir_sha
   }

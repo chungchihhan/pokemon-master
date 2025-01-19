@@ -12,8 +12,15 @@ table = dynamodb.Table(os.getenv("DYNAMODB_TABLE"))
 def lambda_handler(event, context):
     unique_id = str(uuid.uuid4())
     # Get the Pokémon name from the event
-    pokemon_name = event.get("pathParameters", {}).get("pokemon_name").lower()
-    # pokemon_name = event.get('queryStringParameters', {}).get('pokemon_name', 'ditto').lower()
+    path_parameters = event.get("pathParameters", {})
+    if not path_parameters:
+        raise ValueError("Missing pathParameters in the request.")
+    
+    pokemon_name = path_parameters.get("pokemon_name")
+    if not pokemon_name:
+        raise ValueError("Missing 'pokemon_name' in pathParameters.")
+    
+    pokemon_name = pokemon_name.lower()
 
     # Build the PokeAPI URL
     api_url = f"https://pokeapi.co/api/v2/pokemon/{pokemon_name}"
@@ -43,10 +50,10 @@ def lambda_handler(event, context):
         }
     }
 
-    save_response = table.put_item(Item=important_data)
+    table.put_item(Item=important_data)
 
     # Return the important data
     return {
         'statusCode': 200,
-        'body': json.dumps(save_response)
-    }
+        'body': "Pokemon saved successfully"
+        }

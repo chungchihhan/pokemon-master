@@ -10,6 +10,12 @@ variable "dynamodb_table" {
   default = "pokemon_table"
 }
 
+variable "service_name" {
+  description = "Service name"
+  type        = string
+  default = "pokemon"
+}
+
 variable "docker_host" {
   description = "Docker host"
   type        = string
