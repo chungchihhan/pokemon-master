@@ -55,5 +55,5 @@ def lambda_handler(event, context):
     # Return the important data
     return {
         'statusCode': 200,
-        'body': "Pokemon saved successfully"
+        'body': json.dumps(important_data)
         }
