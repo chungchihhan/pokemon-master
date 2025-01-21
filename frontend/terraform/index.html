@@ -1,0 +1,174 @@
+<!DOCTYPE html>
+<html>
+  <head>
+    <link
+      rel="stylesheet"
+      href="https://fonts.googleapis.com/css2?family=Press+Start+2P&display=swap"
+    />
+    <link rel="stylesheet" href="styles.css" />
+    <title>AWS Pokemon</title>
+    <script>
+      const INVOKE_URL = "INVOKE_URL_PLACEHOLDER";
+      function searchPokemon() {
+        var pokemonName = document.getElementById("pokemonName").value;
+        var requestData = {
+          queryStringParameters: {
+            pokemon_name: pokemonName,
+          },
+        };
+
+        var requestOptions = {
+          method: "POST",
+          headers: {
+            "Content-Type": "application/json",
+          },
+          body: JSON.stringify(requestData),
+        };
+        document.getElementById("loading").style.display = "block";
+        fetch(INVOKE_URL + "/pokemon/" + pokemonName, requestOptions)
+          .then((response) => {
+            if (!response.ok) {
+              throw new Error(`HTTP error! Status: ${response.status}`);
+            }
+            return response.json(); // Parse JSON
+          })
+          .then((data) => {
+            displayPokemon(data);
+            document.getElementById("loading").style.display = "none";
+          })
+          .catch((error) => {
+            document.getElementById("response").textContent = "Error: " + error;
+            document.getElementById("loading").style.display = "none";
+          });
+      }
+      function displayPokemon(pokemonData) {
+        const isShiny = pokemonData.sprites.selected_sprite.includes("shiny");
+        const cardClass = isShiny ? "pokemon-card-shiny" : "pokemon-card";
+        var card = `
+          <div class="${cardClass}">
+              <div class="pokemon-name">${pokemonData.name}</div>
+              <img class="pokemon-image" src="${
+                pokemonData.sprites.selected_sprite
+              }" alt="${pokemonData.name}">
+              <div class="pokemon-info"><strong>Abilities:</strong> ${pokemonData.abilities
+                .map((a) => a.name)
+                .join(", ")}</div>
+              <div class="pokemon-info"><strong>Types:</strong> ${pokemonData.types
+                .map((t) => t.name)
+                .join(", ")}</div>
+              <div class="pokemon-info"><strong>Height:</strong> ${
+                pokemonData.height
+              }</div>
+              <div class="pokemon-info"><strong>Weight:</strong> ${
+                pokemonData.weight
+              }</div>
+          </div>
+      `;
+        document.getElementById("response").innerHTML = card;
+      }
+
+      function listPokemons() {
+        var requestOptions = {
+          method: "GET",
+          headers: {
+            "Content-Type": "application/json",
+          },
+        };
+        document.getElementById("loading-bag").style.display = "block";
+        fetch(INVOKE_URL + "/pokemons", requestOptions)
+          .then((response) => {
+            if (!response.ok) {
+              throw new Error(`HTTP error! Status: ${response.status}`);
+            }
+            return response.json(); // Parse JSON
+          })
+          .then((data) => {
+            displayAllPokemon(data);
+            document.getElementById("loading-bag").style.display = "none";
+          })
+          .catch((error) => {
+            document.getElementById("response").textContent = "Error: " + error;
+            document.getElementById("loading-bag").style.display = "none";
+          });
+      }
+      function displayAllPokemon(pokemonList) {
+        var cards = pokemonList
+          .map((pokemonData) => {
+            const isShiny =
+              pokemonData.sprites.selected_sprite.includes("shiny");
+            const cardClass = isShiny
+              ? "pokemon-card-bag-shiny"
+              : "pokemon-card-bag";
+
+            return `
+            <div class="${cardClass}">
+                <div class="pokemon-name-bag">${pokemonData.name}</div>
+                <img class="pokemon-image-bag" src="${
+                  pokemonData.sprites.selected_sprite
+                }" alt="${pokemonData.name}">
+                <div class="pokemon-info-bag"><strong>Abilities:</strong> ${pokemonData.abilities
+                  .map((a) => a.name)
+                  .join(", ")}</div>
+                <div class="pokemon-info-bag"><strong>Types:</strong> ${pokemonData.types
+                  .map((t) => t.name)
+                  .join(", ")}</div>
+                <div class="pokemon-info-bag"><strong>Height:</strong> ${
+                  pokemonData.height
+                }</div>
+                <div class="pokemon-info-bag"><strong>Weight:</strong> ${
+                  pokemonData.weight
+                }</div>
+            </div>
+            `;
+          })
+          .join("");
+        document.getElementById("allPokemonResponse").innerHTML = cards;
+      }
+    </script>
+  </head>
+  <body class="whole-background">
+    <div class="container">
+      <div class="pokemon-form">
+        <h1>AWS Pokemon</h1>
+        <!-- <h2>Ϟ(๑• .̫ •๑)∩</h2> -->
+        <div class="catch-area-title">
+          <input
+            type="text"
+            id="pokemonName"
+            placeholder="Enter the Pokemon name"
+          />
+          <button onclick="searchPokemon()">
+            Catch!
+            <img src="pokeball.png" alt="pokeball" class="pokeball-icon" />
+          </button>
+        </div>
+        <p>"Enter the name of a Pokemon to catch it."</p>
+        <div id="loading" style="display: none" class="pokeball-icon-loading">
+          <img src="pokeball.png" alt="pokeball" />
+          Catching...
+        </div>
+        <div id="response"></div>
+      </div>
+      <div class="bag-area">
+        <div class="bag-area-title">
+          <h2 onclick="listPokemons()">Show all my Pokemons</h2>
+          <img
+            src="red_backpack.png"
+            alt="red_backpack"
+            onclick="listPokemons()"
+            class="red-backpack-icon"
+          />
+        </div>
+        <div
+          id="loading-bag"
+          style="display: none"
+          class="pokeball-icon-loading"
+        >
+          <img src="pokeball.png" alt="pokeball" />
+          Checking your bag...
+        </div>
+        <div id="allPokemonResponse" class="cards-area"></div>
+      </div>
+    </div>
+  </body>
+</html>

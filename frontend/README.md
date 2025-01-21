@@ -1,0 +1,3 @@
+terrafrom init
+
+terraform apply
