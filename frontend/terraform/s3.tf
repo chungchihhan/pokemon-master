@@ -5,28 +5,18 @@ resource "random_string" "this" {
   upper   = false
 }
 
+locals {
+  source_path = "${path.module}/../.."
+  bucket_name = "${var.bucket_name}-${random_string.this.result}"
+}
+
 # In your current folder's main.tf or a new file
 data "terraform_remote_state" "api" {
   backend = "local"
   
   config = {
-    path = "../../src/terraform/terraform.tfstate"  # Adjust this path to point to your API Gateway state file
+    path = "${local.source_path}/src/terraform/terraform.tfstate"
   }
-}
-
-# locals {
-#   source_path = "${path.module}/.."
-#   path_include                                    = ["**"]
-#   path_exclude                                    = ["**/__pycache__/**"]
-#   files_include                                   = setunion([for f in local.path_include : fileset(local.source_path, f)]...)
-#   files_exclude                                   = setunion([for f in local.path_exclude : fileset(local.source_path, f)]...)
-#   files                                           = sort(setsubtract(local.files_include, local.files_exclude))
-#   dir_sha                                         = sha1(join("", [for f in local.files : filesha1("${local.source_path}/${f}")]))
-# }
-
-
-locals {
-  bucket_name = "${var.bucket_name}-${random_string.this.result}"
 }
 
 data "aws_iam_policy_document" "bucket_policy" {
@@ -83,9 +73,8 @@ module "s3_bucket" {
   }
 }
 
-# Read the raw HTML template file
 data "local_file" "index_html_template" {
-  filename = "./index.html"
+  filename = "${local.source_path}/frontend/files/index.html"
 }
 
 resource "aws_s3_object" "index_html" {
@@ -99,29 +88,29 @@ resource "aws_s3_object" "index_html" {
 resource "aws_s3_object" "error_html" {
   bucket = module.s3_bucket.s3_bucket_id
   key    = "error.html"
-  source = "./error.html"
-  etag   = filemd5("./error.html")
+  source = "${local.source_path}/frontend/files/error.html"
+  etag   = filemd5("${local.source_path}/frontend/files/error.html")
   content_type = "text/html"
 }
 
 resource "aws_s3_object" "styles_css" {
   bucket = module.s3_bucket.s3_bucket_id
   key    = "styles.css"
-  source = "./styles.css"
-  etag   = filemd5("./styles.css") # Ensures the object is updated only when the file changes
+  source = "${local.source_path}/frontend/files/styles.css"
+  etag   = filemd5("${local.source_path}/frontend/files/styles.css")
   content_type = "text/css"
 }
 
 resource "aws_s3_object" "pokeball_png" {
   bucket = module.s3_bucket.s3_bucket_id
   key    = "pokeball.png"
-  source = "./pokeball.png"
-  etag   = filemd5("./pokeball.png") # Ensures the object is updated only when the file changes
+  source = "${local.source_path}/frontend/files/pokeball.png"
+  etag   = filemd5("${local.source_path}/frontend/files/pokeball.png")
 }
 
 resource "aws_s3_object" "red_backpack_png" {
   bucket = module.s3_bucket.s3_bucket_id
   key    = "red_backpack.png"
-  source = "./red_backpack.png"
-  etag   = filemd5("./red_backpack.png") # Ensures the object is updated only when the file changes
+  source = "${local.source_path}/frontend/files/red_backpack.png"
+  etag   = filemd5("${local.source_path}/frontend/files/red_backpack.png")
 }
