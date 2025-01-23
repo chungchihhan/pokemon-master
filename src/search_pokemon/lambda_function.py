@@ -2,6 +2,7 @@ import json
 import os
 import random
 import uuid
+from datetime import datetime, timezone
 
 import boto3
 import requests
@@ -40,6 +41,7 @@ def lambda_handler(event, context):
 
     important_data = {
         'ID': unique_id,
+        'timestamp': datetime.now(timezone.utc).isoformat(),
         'name': data['name'],
         'abilities': [{'name': ability['ability']['name']} for ability in data['abilities']],
         'types': [{'name': type['type']['name']} for type in data['types']],

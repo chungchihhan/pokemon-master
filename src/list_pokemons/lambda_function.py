@@ -21,12 +21,18 @@ def lambda_handler(event, context):
     # Scan the table to retrieve all items
     try:
         response = table.scan()
-        items = response['Items']
+        items = response.get('Items', [])
+
+        # Sort the items by timestamp in descending order
+        sorted_items = sorted(items, key=lambda x: x['timestamp'], reverse=True)
+
+        # Get the latest 10 items
+        latest_ten_items = sorted_items[:30]
 
         # Return the items as a JSON object using the custom encoder
         return {
             'statusCode': 200,
-            'body': json.dumps(items, cls=DecimalEncoder)
+            'body': json.dumps(latest_ten_items, cls=DecimalEncoder)
         }
     except Exception as e:
         # Handle any errors that occur during the scan
