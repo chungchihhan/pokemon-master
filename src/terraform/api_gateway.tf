@@ -1,27 +1,10 @@
 locals {
-  region             = var.aws_region
+  region = var.aws_region
 
   tags = {
     Service = var.service_name
   }
 }
-
-# # Find a certificate that is issued
-# data "aws_acm_certificate" "issued" {
-#   domain   = "*.${var.domain_name}"
-#   statuses = ["ISSUED"]
-# }
-
-# data "aws_route53_zone" "awseducate_systems" {
-#   name         = var.domain_name
-#   private_zone = false
-# }
-
-
-# # Get Lambda authorizer lambda
-# data "aws_ssm_parameter" "lambda_authorizer_lambda_invoke_arn" {
-#   name = "${var.environment}-lambda_authorizer_lambda_invoke_arn"
-# }
 
 ################################################################################
 # API Gateway Module
@@ -110,8 +93,8 @@ module "api_gateway" {
 
   stage_default_route_settings = {
     detailed_metrics_enabled = true
-    throttling_burst_limit   = 100
-    throttling_rate_limit    = 100
+    throttling_burst_limit   = 5
+    throttling_rate_limit    = 10
   }
 
   tags = local.tags
