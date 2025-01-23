@@ -61,6 +61,7 @@ body {
   color: #000;
   height: 50px;
   width: 100%;
+  margin-bottom: 20px;
 }
 
 .interaction-area input {
@@ -267,6 +268,7 @@ body {
   border-radius: 10px;
   overflow: hidden;
   box-sizing: border-box;
+  margin-bottom: 50px;
 }
 
 .listPokemons-card,
