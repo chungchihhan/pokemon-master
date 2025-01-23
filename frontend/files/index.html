@@ -13,6 +13,10 @@
         "https://nmrvguqda2.execute-api.ap-northeast-1.amazonaws.com";
       function searchPokemon() {
         var pokemonName = document.getElementById("pokemonName").value;
+        if (!pokemonName) {
+          alert("Please enter a Pokemon name!");
+          return;
+        }
         var requestData = {
           queryStringParameters: {
             pokemon_name: pokemonName,
@@ -208,6 +212,12 @@
           Bag!
           <img src="bag.png" alt="bag" class="bag-icon" />
         </button>
+        <p class="pokedex-link">
+          Don't know a Pokémon name?
+          <a href="https://www.pokemon.com/us/pokedex" target="_blank">
+            Explore the Pokédex </a
+          >.
+        </p>
       </div>
       <div id="searchPokemon-response"></div>
       <div id="loading" style="display: none" class="pokeball-icon-loading">
@@ -220,5 +230,18 @@
         <div class="loading-text">Loading Bag<span></span></div>
       </div>
     </div>
+    <footer class="footer">
+      <p>
+        &copy; AWS Pokemon Master | chungchihhan |
+        <a href="https://github.com/chungchihhan/pokemon-master" target="_blank"
+          >Github</a
+        >
+      </p>
+      <p>
+        Special thanks to
+        <a href="https://pokeapi.co/" target="_blank">PokéAPI</a> for providing
+        the Pokémon data.
+      </p>
+    </footer>
   </body>
 </html>
