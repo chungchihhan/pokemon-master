@@ -103,37 +103,53 @@
           });
       }
       function displayAllPokemon(pokemonList) {
+        document.getElementById("listPokemons-response").innerHTML = "";
+
+        // Map over the Pokemon list and generate cards
         var cards = pokemonList
           .map((pokemonData) => {
-            const isShiny =
-              pokemonData.sprites.selected_sprite.includes("shiny");
+            const isShiny = pokemonData.sprites.selected_sprite.includes("shiny");
             const cardClass = isShiny
-              ? "pokemon-card-bag-shiny"
-              : "pokemon-card-bag";
+              ? "listPokemons-card-shiny"
+              : "listPokemons-card";
 
             return `
-            <div class="${cardClass}">
-                <div class="pokemon-name-bag">${pokemonData.name}</div>
-                <img class="pokemon-image-bag" src="${
-                  pokemonData.sprites.selected_sprite
-                }" alt="${pokemonData.name}">
-                <div class="pokemon-info-bag"><strong>Abilities:</strong> ${pokemonData.abilities
-                  .map((a) => a.name)
-                  .join(", ")}</div>
-                <div class="pokemon-info-bag"><strong>Types:</strong> ${pokemonData.types
-                  .map((t) => t.name)
-                  .join(", ")}</div>
-                <div class="pokemon-info-bag"><strong>Height:</strong> ${
-                  pokemonData.height
-                }</div>
-                <div class="pokemon-info-bag"><strong>Weight:</strong> ${
-                  pokemonData.weight
-                }</div>
-            </div>
+              <div class="${cardClass}">
+                <p class="listPokemons-title">${pokemonData.name}</p>
+                <img
+                  class="pokemon-image"
+                  src="${pokemonData.sprites.selected_sprite}"
+                  alt="${pokemonData.name}-image"
+                />
+                <div class="listPokemons-info-text">
+                  <div class="abilities">
+                    <strong>Abilities:</strong>
+                    <div class="keywords">${pokemonData.abilities
+                      .map((a) => a.name)
+                      .join(", ")}</div>
+                  </div>
+                  <div class="types">
+                    <strong>Types:</strong>
+                    <div class="keywords">${pokemonData.types
+                      .map((t) => t.name)
+                      .join(", ")}</div>
+                  </div>
+                  <div class="height">
+                    <strong>Height:</strong>
+                    <div class="keywords">${pokemonData.height}</div>
+                  </div>
+                  <div class="weight">
+                    <strong>Weight:</strong>
+                    <div class="keywords">${pokemonData.weight}</div>
+                  </div>
+                </div>
+              </div>
             `;
           })
           .join("");
-        document.getElementById("allPokemonResponse").innerHTML = cards;
+
+        // Inject the generated cards into the listPokemons-response div
+        document.getElementById("listPokemons-response").innerHTML = cards;
       }
     </script>
   </head>
@@ -156,32 +172,16 @@
         </button>
       </div>
       <div id="searchPokemon-response"></div>
-      <!-- <div class="list_pokemon-area">
-        <div class="list_pokemon-area-title">
-          <img
-            src="red_backpack.png"
-            alt="red_backpack"
-            onclick="listPokemons()"
-            class="red-backpack-icon"
-          />
-        </div>
-        <div
-          id="loading-bag"
-          style="display: none"
-          class="pokeball-icon-loading"
-        >
-          <img src="pokeball.png" alt="pokeball" />
-          Checking your bag...
-        </div>
-      -->
-        <!-- <div id="allPokemonResponse" class="cards-area"></div> -->
-      </div> 
+      <div id="listPokemons-response" class="listPokemons-area"></div>
+    </div> 
       <div id="loading" style="display: none" class="pokeball-icon-loading">
         <img src="pokeball.png" alt="pokeball" />
         Catching...
+      </div>  
+      <div id="loading-bag" style="display: none" class="pokeball-icon-loading">
+        <img src="pokeball.png" alt="pokeball" />
+        Loading Bag...
       </div>
-      <!-- <div id="searchPokemon_response"></div>-->
-  
     </div>
   </body>
 </html>

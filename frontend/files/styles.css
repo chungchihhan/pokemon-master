@@ -1,5 +1,8 @@
 .whole-background {
   background-color: #fafad2;
+  min-width: 1000px;
+  width: 100%;
+  overflow-x: auto;
 }
 
 .pokemon-master-title {
@@ -117,6 +120,18 @@
   }
 }
 
+@keyframes shine {
+  0% {
+    background-position: top left;
+  }
+  50% {
+    background-position: bottom right;
+  }
+  100% {
+    background-position: top left;
+  }
+}
+
 .searchPokemon-area {
   display: flex;
   flex-direction: column;
@@ -180,6 +195,7 @@
   border: 4px solid #000;
   border-radius: 10px;
   box-shadow: 5px 5px 0 #000;
+  image-rendering: pixelated;
 }
 
 .searchPokemon-info-text {
@@ -208,181 +224,114 @@
   padding-left: 10px;
 }
 
-.pokemon-card-shiny {
+.listPokemons-area {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+  gap: 20px;
+  justify-content: center;
+  align-items: center;
+  background-color: #d3d3b1;
+  background-size: 20px 20px;
+  background-position: 0 0;
+  padding: 20px;
+  border: 4px solid #000;
+  border-radius: 10px;
+  overflow: hidden;
+  box-sizing: border-box;
+}
+
+.listPokemons-card,
+.listPokemons-card-shiny {
   display: flex;
   flex-direction: column;
   border: 4px solid #000;
   border-radius: 10px;
-  padding: 10px;
-  margin-top: 10px;
-  width: 300px;
-  background-color: #fff152;
-  background-image: linear-gradient(
-    45deg,
-    rgba(255, 255, 255, 0.8) 25%,
-    transparent 25%,
-    transparent 50%,
-    rgba(255, 255, 255, 0.8) 50%,
-    rgba(255, 255, 255, 0.8) 75%,
-    transparent 75%,
-    transparent
-  );
-  background-size: 200px 200px;
+  padding-top: 10px;
+  padding-bottom: 10px;
+  padding-left: 20px;
+  padding-right: 20px;
+  background-color: #f0f0f0;
   box-shadow: 5px 5px 0 #000;
   font-family: "Press Start 2P", cursive;
-  animation: shine 1s linear infinite, shake 3s infinite;
+  position: relative;
 }
 
-.pokemon-name {
-  display: flex;
-  justify-content: center;
-  width: 100%;
-  font-size: 24px;
-  font-weight: bold;
-  color: #000;
-  text-transform: uppercase;
-}
-.pokemon-image {
-  display: flex;
-  align-self: center;
-  width: 200px;
-  height: 200px;
-  image-rendering: pixelated;
-}
-.pokemon-info {
-  padding: 5px;
-  font-size: 16px;
-  color: #000;
-}
-
-.pokemon-card-bag {
-  display: flex;
-  flex-direction: column;
-  border: 2px solid #000;
-  border-radius: 10px;
-  padding: 5px;
-  margin-top: 10px;
-  margin-bottom: 10px;
-  width: 150px;
-  background-color: #f0f0f0;
-  box-shadow: 2px 2px 0 #000;
-  font-family: "Press Start 2P", cursive;
-  /* animation: shake 3s infinite; */
-}
-
-.pokemon-card-bag-shiny {
-  display: flex;
-  flex-direction: column;
-  border: 2px solid #000000;
-  border-radius: 10px;
-  padding: 5px;
-  margin-top: 10px;
-  margin-bottom: 10px;
-  width: 150px;
+.listPokemons-card-shiny {
   background-color: #fff152;
   background-image: linear-gradient(
-    45deg,
-    rgba(255, 255, 255, 0.8) 25%,
-    transparent 25%,
-    transparent 50%,
-    rgba(255, 255, 255, 0.8) 50%,
-    rgba(255, 255, 255, 0.8) 75%,
-    transparent 75%,
-    transparent
+    135deg,
+    rgba(255, 255, 255, 0.6) 25%,
+    rgba(255, 255, 255, 0) 25%,
+    rgba(255, 255, 255, 0) 50%,
+    rgba(255, 255, 255, 0.6) 50%,
+    rgba(255, 255, 255, 0.6) 75%,
+    rgba(255, 255, 255, 0) 75%,
+    rgba(255, 255, 255, 0)
   );
   background-size: 50px 50px;
-  box-shadow: 2px 2px 0 #000;
-  font-family: "Press Start 2P", cursive;
-  animation: shine 1s linear infinite, shake 3s infinite;
+  animation: shine 10s linear infinite, shake 3s infinite;
 }
 
-@keyframes shine {
-  0% {
-    background-position: top left;
-  }
-  50% {
-    background-position: bottom right;
-  }
-  100% {
-    background-position: top left;
-  }
-}
-
-.pokemon-name-bag {
+.listPokemons-card:hover .listPokemons-info-text,
+.listPokemons-card-shiny:hover .listPokemons-info-text {
   display: flex;
-  justify-content: center;
-  width: 100%;
-  font-size: 12px;
-  font-weight: bold;
-  color: #000;
-  text-transform: uppercase;
 }
-.pokemon-image-bag {
+
+.listPokemons-info-text {
+  display: none;
+  flex-direction: column;
+  position: absolute;
+  top: 0;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  background-color: rgba(0, 0, 0, 0.8); /* Add a translucent background */
+  color: #fff;
+  border-radius: 5px;
+  padding: 10px;
+  justify-content: center;
+  align-items: center;
+  text-align: center;
+  z-index: 1;
+}
+
+.listPokemons-card img,
+.listPokemons-card-shiny img {
   display: flex;
   align-self: center;
-  width: 100px;
-  height: 100px;
+  height: 150px;
   image-rendering: pixelated;
-}
-.pokemon-info-bag {
-  padding: 2px;
-  font-size: 8px;
-  color: #000;
+  object-fit: contain;
 }
 
-.cards-area {
-  display: flex;
-  flex-wrap: wrap;
-  justify-content: start;
-  padding: 20px;
-  gap: 20px;
-}
-
-.list_pokemon-area-title {
-  display: flex;
-  gap: 10px;
-  animation: flash 2s infinite;
-}
-
-.list_pokemon-area-title h2 {
-  cursor: pointer;
-  transition: 0.05s;
-}
-
-.list_pokemon-area-title h2:hover {
-  color: #ffd700;
-}
-
-@keyframes flash {
-  0% {
-    color: #000;
-  }
-  50% {
-    color: #ff0000;
-  }
-  100% {
-    color: #000;
-  }
-}
-
-.pokeball-icon {
-  width: 20px;
-  /* height: 40px; */
-}
-
-/* .interaction-area-title {
-  display: flex;
-  justify-content: start;
-  align-items: center;
-  gap: 20px;
-} */
-
-/* .interaction-area-title button {
-  display: flex;
+.listPokemons-info-text {
+  font-family: "Press Start 2P", cursive;
+  flex-direction: column;
   justify-content: center;
   align-items: center;
-} */
+  gap: 10px;
+  line-height: 1.6;
+}
 
-.pokeball-icon-loading img {
-  width: 30px;
+.listPokemons-info-text strong {
+  text-align: center;
+  font-size: 10px;
+  display: block;
+}
+
+.listPokemons-info-text .keywords {
+  text-align: center;
+  font-size: 8px;
+  color: #ddd;
+  padding-top: 5px;
+  padding-bottom: 5px;
+}
+
+@media (max-width: 1200px) {
+  .listPokemons-area {
+    grid-template-columns: repeat(
+      auto-fit,
+      minmax(180px, 1fr)
+    ); /* Slightly smaller cards */
+  }
 }
