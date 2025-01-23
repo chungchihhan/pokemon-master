@@ -10,7 +10,6 @@ locals {
   bucket_name = "${var.bucket_name}-${random_string.this.result}"
 }
 
-# In your current folder's main.tf or a new file
 data "terraform_remote_state" "api" {
   backend = "local"
   
@@ -22,11 +21,11 @@ data "terraform_remote_state" "api" {
 data "aws_iam_policy_document" "bucket_policy" {
   statement {
     principals {
-      type        = "AWS"
+      type        = "*"
       identifiers = ["*"]
     }
 
-    actions = ["s3:PutObject", "s3:GetObject"]
+    actions = ["s3:GetObject"]
 
     resources = [
       "arn:aws:s3:::${local.bucket_name}/*",
