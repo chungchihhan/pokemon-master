@@ -101,14 +101,14 @@ body {
   height: auto;
 }
 
-.interaction-area p {
+.interaction-area button:hover {
+  background-color: #e0e0e0;
+}
+
+.interaction-container p {
   font-size: 10px;
   animation: flash 2s infinite;
   text-align: center;
-}
-
-.interaction-area button:hover {
-  background-color: #e0e0e0;
 }
 
 @keyframes shake {

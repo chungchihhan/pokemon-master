@@ -197,20 +197,22 @@
   <body class="whole-background">
     <h1 class="pokemon-master-title">~ AWS Pokemon Master ~</h1>
     <div class="main-container">
-      <div class="interaction-area">
-        <input
-          type="text"
-          id="pokemonName"
-          placeholder="Enter the Pokemon name"
-        />
-        <button onclick="searchPokemon()">
-          Catch!
-          <img src="pokeball.png" alt="pokeball" class="pokeball-icon" />
-        </button>
-        <button onclick="listPokemons()">
-          Bag!
-          <img src="bag.png" alt="bag" class="bag-icon" />
-        </button>
+      <div class="interaction-container">
+        <div class="interaction-area">
+          <input
+            type="text"
+            id="pokemonName"
+            placeholder="Enter the Pokemon name"
+          />
+          <button onclick="searchPokemon()">
+            Catch!
+            <img src="pokeball.png" alt="pokeball" class="pokeball-icon" />
+          </button>
+          <button onclick="listPokemons()">
+            Bag!
+            <img src="bag.png" alt="bag" class="bag-icon" />
+          </button>
+        </div>
         <p class="pokedex-link">
           Don't know a Pokémon name?
           <a href="https://www.pokemon.com/us/pokedex" target="_blank">
