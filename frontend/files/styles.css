@@ -335,3 +335,47 @@
     ); /* Slightly smaller cards */
   }
 }
+
+/* Add spinning animation for Pokéball */
+@keyframes spin {
+  0% {
+    transform: rotate(0deg);
+  }
+  100% {
+    transform: rotate(360deg);
+  }
+}
+
+.pokeball-icon-loading img {
+  width: 50px;
+  height: 50px;
+  animation: spin 1s linear infinite; /* Spinning animation */
+}
+
+.loading-text {
+  font-family: "Press Start 2P", cursive;
+  font-size: 16px;
+  color: #ff0000;
+  margin-top: 10px;
+}
+
+/* Add dynamic dots animation */
+@keyframes dots {
+  0% {
+    content: ".";
+  }
+  33% {
+    content: "..";
+  }
+  66% {
+    content: "...";
+  }
+  100% {
+    content: "";
+  }
+}
+
+.loading-text:after {
+  content: "...";
+  animation: dots 1.5s infinite;
+}

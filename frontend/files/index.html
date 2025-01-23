@@ -9,7 +9,8 @@
     <title>AWS Pokemon</title>
     <script>
       // const INVOKE_URL = "INVOKE_URL_PLACEHOLDER";
-      const INVOKE_URL = "https://nmrvguqda2.execute-api.ap-northeast-1.amazonaws.com";
+      const INVOKE_URL =
+        "https://nmrvguqda2.execute-api.ap-northeast-1.amazonaws.com";
       function searchPokemon() {
         var pokemonName = document.getElementById("pokemonName").value;
         var requestData = {
@@ -25,7 +26,11 @@
           },
           body: JSON.stringify(requestData),
         };
-        document.getElementById("loading").style.display = "block";
+        const loadingElement = document.getElementById("loading");
+        if (loadingElement) {
+          loadingElement.style.display = "block";
+        }
+
         fetch(INVOKE_URL + "/pokemon/" + pokemonName, requestOptions)
           .then((response) => {
             if (!response.ok) {
@@ -38,14 +43,16 @@
             document.getElementById("loading").style.display = "none";
           })
           .catch((error) => {
-            document.getElementById("response").textContent = "Error: " + error;
+            alert("Error: " + error.message);
             document.getElementById("loading").style.display = "none";
           });
       }
       function displayPokemon(pokemonData) {
         const isShiny = pokemonData.sprites.selected_sprite.includes("shiny");
         var card = `
-          <div id="searchPokemon-response" class=${isShiny ? "searchPokemon-area-shiny" : "searchPokemon-area"}>
+          <div class=${
+            isShiny ? "searchPokemon-area-shiny" : "searchPokemon-area"
+          }>
             <p class="searchPokemon-title">${pokemonData.name}</p>
             <div class="searchPokemon-info">
               <img
@@ -56,11 +63,15 @@
               <div class="searchPokemon-info-text">
                 <div class="abilities">
                   <strong>Abilities:</strong>
-                  <div class="keywords">${pokemonData.abilities.map((a) => a.name).join(", ")}</div>
+                  <div class="keywords">${pokemonData.abilities
+                    .map((a) => a.name)
+                    .join(", ")}</div>
                 </div>
                 <div class="types">
                   <strong>Types:</strong>
-                  <div class="keywords">${pokemonData.types.map((t) => t.name).join(", ")}</div>
+                  <div class="keywords">${pokemonData.types
+                    .map((t) => t.name)
+                    .join(", ")}</div>
                 </div>
                 <div class="height">
                   <strong>Height:</strong>
@@ -74,9 +85,13 @@
             </div>
           </div>
         `;
-        document.getElementById("searchPokemon-response").outerHTML = card;
+        // Clear the old content and insert the new card
+        const responseElement = document.getElementById(
+          "searchPokemon-response"
+        );
+        responseElement.innerHTML = "";
+        responseElement.innerHTML = card;
       }
-
 
       function listPokemons() {
         var requestOptions = {
@@ -85,7 +100,11 @@
             "Content-Type": "application/json",
           },
         };
-        document.getElementById("loading-bag").style.display = "block";
+        const loadingBagElement = document.getElementById("loading-bag");
+        if (loadingBagElement) {
+          loadingBagElement.style.display = "block";
+        }
+
         fetch(INVOKE_URL + "/pokemons", requestOptions)
           .then((response) => {
             if (!response.ok) {
@@ -98,17 +117,26 @@
             document.getElementById("loading-bag").style.display = "none";
           })
           .catch((error) => {
-            document.getElementById("response").textContent = "Error: " + error;
+            alert("Error: " + error.message);
             document.getElementById("loading-bag").style.display = "none";
           });
       }
       function displayAllPokemon(pokemonList) {
-        document.getElementById("listPokemons-response").innerHTML = "";
+        const listPokemonsResponse = document.getElementById(
+          "listPokemons-response"
+        );
+        if (listPokemonsResponse) {
+          listPokemonsResponse.outerHTML = `
+            <div id="listPokemons-response" class="listPokemons-area"></div>
+          `;
+          listPokemonsResponse.innerHTML = "";
+        }
 
         // Map over the Pokemon list and generate cards
         var cards = pokemonList
           .map((pokemonData) => {
-            const isShiny = pokemonData.sprites.selected_sprite.includes("shiny");
+            const isShiny =
+              pokemonData.sprites.selected_sprite.includes("shiny");
             const cardClass = isShiny
               ? "listPokemons-card-shiny"
               : "listPokemons-card";
@@ -151,6 +179,16 @@
         // Inject the generated cards into the listPokemons-response div
         document.getElementById("listPokemons-response").innerHTML = cards;
       }
+
+      document.addEventListener("DOMContentLoaded", () => {
+        // Add event listener for the Enter key
+        const pokemonInput = document.getElementById("pokemonName");
+        pokemonInput.addEventListener("keydown", (event) => {
+          if (event.key === "Enter") {
+            searchPokemon(); // Trigger the searchPokemon function
+          }
+        });
+      });
     </script>
   </head>
   <body class="whole-background">
@@ -172,15 +210,14 @@
         </button>
       </div>
       <div id="searchPokemon-response"></div>
-      <div id="listPokemons-response" class="listPokemons-area"></div>
-    </div> 
       <div id="loading" style="display: none" class="pokeball-icon-loading">
         <img src="pokeball.png" alt="pokeball" />
-        Catching...
-      </div>  
+        <div class="loading-text">Catching<span></span></div>
+      </div>
+      <div id="listPokemons-response"></div>
       <div id="loading-bag" style="display: none" class="pokeball-icon-loading">
         <img src="pokeball.png" alt="pokeball" />
-        Loading Bag...
+        <div class="loading-text">Loading Bag<span></span></div>
       </div>
     </div>
   </body>
