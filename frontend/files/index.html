@@ -8,7 +8,8 @@
     <link rel="stylesheet" href="styles.css" />
     <title>AWS Pokemon</title>
     <script>
-      const INVOKE_URL = "INVOKE_URL_PLACEHOLDER";
+      // const INVOKE_URL = "INVOKE_URL_PLACEHOLDER";
+      const INVOKE_URL = "https://nmrvguqda2.execute-api.ap-northeast-1.amazonaws.com";
       function searchPokemon() {
         var pokemonName = document.getElementById("pokemonName").value;
         var requestData = {
@@ -43,29 +44,39 @@
       }
       function displayPokemon(pokemonData) {
         const isShiny = pokemonData.sprites.selected_sprite.includes("shiny");
-        const cardClass = isShiny ? "pokemon-card-shiny" : "pokemon-card";
         var card = `
-          <div class="${cardClass}">
-              <div class="pokemon-name">${pokemonData.name}</div>
-              <img class="pokemon-image" src="${
-                pokemonData.sprites.selected_sprite
-              }" alt="${pokemonData.name}">
-              <div class="pokemon-info"><strong>Abilities:</strong> ${pokemonData.abilities
-                .map((a) => a.name)
-                .join(", ")}</div>
-              <div class="pokemon-info"><strong>Types:</strong> ${pokemonData.types
-                .map((t) => t.name)
-                .join(", ")}</div>
-              <div class="pokemon-info"><strong>Height:</strong> ${
-                pokemonData.height
-              }</div>
-              <div class="pokemon-info"><strong>Weight:</strong> ${
-                pokemonData.weight
-              }</div>
+          <div id="searchPokemon-response" class=${isShiny ? "searchPokemon-area-shiny" : "searchPokemon-area"}>
+            <p class="searchPokemon-title">${pokemonData.name}</p>
+            <div class="searchPokemon-info">
+              <img
+              class="pokemon-image"
+              src="${pokemonData.sprites.selected_sprite}"
+              alt="pokemon-image"
+              />
+              <div class="searchPokemon-info-text">
+                <div class="abilities">
+                  <strong>Abilities:</strong>
+                  <div class="keywords">${pokemonData.abilities.map((a) => a.name).join(", ")}</div>
+                </div>
+                <div class="types">
+                  <strong>Types:</strong>
+                  <div class="keywords">${pokemonData.types.map((t) => t.name).join(", ")}</div>
+                </div>
+                <div class="height">
+                  <strong>Height:</strong>
+                  <div class="keywords">${pokemonData.height}</div>
+                </div>
+                <div class="weight">
+                  <strong>Weight:</strong>
+                  <div class="keywords">${pokemonData.weight}</div>
+                </div>
+              </div>
+            </div>
           </div>
-      `;
-        document.getElementById("response").innerHTML = card;
+        `;
+        document.getElementById("searchPokemon-response").outerHTML = card;
       }
+
 
       function listPokemons() {
         var requestOptions = {
@@ -127,31 +138,26 @@
     </script>
   </head>
   <body class="whole-background">
-    <div class="container">
-      <div class="pokemon-form">
-        <h1>AWS Pokemon</h1>
-        <!-- <h2>Ϟ(๑• .̫ •๑)∩</h2> -->
-        <div class="catch-area-title">
-          <input
-            type="text"
-            id="pokemonName"
-            placeholder="Enter the Pokemon name"
-          />
-          <button onclick="searchPokemon()">
-            Catch!
-            <img src="pokeball.png" alt="pokeball" class="pokeball-icon" />
-          </button>
-        </div>
-        <p>"Enter the name of a Pokemon to catch it."</p>
-        <div id="loading" style="display: none" class="pokeball-icon-loading">
-          <img src="pokeball.png" alt="pokeball" />
-          Catching...
-        </div>
-        <div id="response"></div>
+    <h1 class="pokemon-master-title">~ AWS Pokemon Master ~</h1>
+    <div class="main-container">
+      <div class="interaction-area">
+        <input
+          type="text"
+          id="pokemonName"
+          placeholder="Enter the Pokemon name"
+        />
+        <button onclick="searchPokemon()">
+          Catch!
+          <img src="pokeball.png" alt="pokeball" class="pokeball-icon" />
+        </button>
+        <button onclick="listPokemons()">
+          Bag!
+          <img src="bag.png" alt="bag" class="bag-icon" />
+        </button>
       </div>
-      <div class="bag-area">
-        <div class="bag-area-title">
-          <h2 onclick="listPokemons()">Show all my Pokemons</h2>
+      <div id="searchPokemon-response"></div>
+      <!-- <div class="list_pokemon-area">
+        <div class="list_pokemon-area-title">
           <img
             src="red_backpack.png"
             alt="red_backpack"
@@ -167,8 +173,15 @@
           <img src="pokeball.png" alt="pokeball" />
           Checking your bag...
         </div>
-        <div id="allPokemonResponse" class="cards-area"></div>
+      -->
+        <!-- <div id="allPokemonResponse" class="cards-area"></div> -->
+      </div> 
+      <div id="loading" style="display: none" class="pokeball-icon-loading">
+        <img src="pokeball.png" alt="pokeball" />
+        Catching...
       </div>
+      <!-- <div id="searchPokemon_response"></div>-->
+  
     </div>
   </body>
 </html>

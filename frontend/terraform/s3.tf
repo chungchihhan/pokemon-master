@@ -108,9 +108,9 @@ resource "aws_s3_object" "pokeball_png" {
   etag   = filemd5("${local.source_path}/frontend/files/pokeball.png")
 }
 
-resource "aws_s3_object" "red_backpack_png" {
+resource "aws_s3_object" "bag_png" {
   bucket = module.s3_bucket.s3_bucket_id
-  key    = "red_backpack.png"
-  source = "${local.source_path}/frontend/files/red_backpack.png"
-  etag   = filemd5("${local.source_path}/frontend/files/red_backpack.png")
+  key    = "bag.png"
+  source = "${local.source_path}/frontend/files/bag.png"
+  etag   = filemd5("${local.source_path}/frontend/files/bag.png")
 }
