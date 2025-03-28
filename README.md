@@ -4,7 +4,7 @@ A project that uses terraform to deploy serverless service and shows a static we
 
 # Infrastructure
 
-![Infrastructure Diagram](infra.png)
+![Infrastructure Diagram](infra.jpg)
 
 # For Frontend Deployment
 
